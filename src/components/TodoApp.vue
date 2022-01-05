@@ -2,10 +2,11 @@
     <div class="relative h-full pb-32">
         <div class="p-4 bg-slate-50">
             <div class="container relative max-w-lg mx-auto">
-                <h1 class="text-3xl font-bold text-left text-blue-600">Todo App</h1>
+                <h1 class="text-3xl font-bold text-left text-blue-600">ToDo App</h1>
             </div>
         </div>
         <div class="container relative max-w-lg pt-6 mx-auto">
+            <p class="text-slate-600">Escribe tus objetivos o tareas para este 2022</p>
             <div class="p-4 rounded-md shadow-md shadow-slate-200">
                 <div class="flex justify-between mb-2" v-for="(todo) in sortTodos" :key="todo.id">
                     <div class="flex">
@@ -63,10 +64,38 @@
                     </button>
                 </div>
             </div>
+            <footer class="mt-8 text-center">
+                <p
+                    class="text-sm text-slate-400"
+                >© {{ new Date().getFullYear() }} ToDo from Daniel Ponce</p>
+                <a
+                    href="https://github.com/dmpb"
+                    target="_blank"
+                    class="mr-4 text-base text-slate-400 hover:text-slate-600"
+                >
+                    <i class="fab fa-github-alt"></i>
+                </a>
+                <a
+                    href="https://www.linkedin.com/in/dmpb/"
+                    target="_blank"
+                    class="mr-4 text-base text-slate-400 hover:text-slate-600"
+                >
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a
+                    href="https://www.instagram.com/dmpb.xo/"
+                    target="_blank"
+                    class="text-base text-slate-400 hover:text-slate-600"
+                >
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </footer>
         </div>
         <div class="fixed bottom-0 w-full p-4 bg-white border-t border-gray-200">
             <div>
-                <button class="font-bold text-blue-600" @click="toggleModal()">+ Nuevo Recordatorio</button>
+                <button class="font-bold text-blue-600" @click="toggleModal()">
+                    <i class="text-sm fas fa-plus"></i> Nuevo Recordatorio
+                </button>
             </div>
         </div>
     </div>
@@ -114,7 +143,6 @@ export default {
         sortTodos() {
             return this.todos.sort((a, b) => {
                 if (a.completed == true && b.completed == false) {
-
                     return 1
                 }
                 if (a.completed == false && b.completed == true) {
@@ -126,10 +154,10 @@ export default {
     },
 
     methods: {
-        updateTodo(todo, title, completed) {
+        async updateTodo(todo, title, completed) {
             const index = this.todos.findIndex(e => e.id == todo.id)
 
-            axios.put('https://jsonplaceholder-v1.herokuapp.com/api/todos/' + todo.id, {
+            await axios.put('https://jsonplaceholder-v1.herokuapp.com/api/todos/' + todo.id, {
                 title: title,
                 completed: completed
             }).then((result) => {
@@ -140,10 +168,10 @@ export default {
                 console.error(err);
             });
         },
-        deleteTodo(todo) {
+        async deleteTodo(todo) {
             const index = this.todos.findIndex(e => e.id == todo.id)
 
-            axios.delete('https://jsonplaceholder-v1.herokuapp.com/api/todos/' + todo.id,)
+            await axios.delete('https://jsonplaceholder-v1.herokuapp.com/api/todos/' + todo.id,)
                 .then((result) => {
                     this.todos.splice(index, 1);
                     console.log('success');
@@ -151,8 +179,8 @@ export default {
                     console.error(err);
                 });
         },
-        addTodo() {
-            axios.post('https://jsonplaceholder-v1.herokuapp.com/api/users/1/todos', {
+        async addTodo() {
+            await axios.post('https://jsonplaceholder-v1.herokuapp.com/api/users/1/todos', {
                 title: this.form.title,
                 completed: false,
             }).then((result) => {
