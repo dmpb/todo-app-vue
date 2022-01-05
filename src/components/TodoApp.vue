@@ -66,23 +66,24 @@
         </div>
         <div class="fixed bottom-0 w-full p-4 bg-white border-t border-gray-200">
             <div>
-                <button
-                    class="font-bold text-blue-600"
-                    @click="showModalTodo = !showModalTodo"
-                >+ Nuevo Recordatorio</button>
+                <button class="font-bold text-blue-600" @click="toggleModal()">+ Nuevo Recordatorio</button>
             </div>
         </div>
     </div>
     <div v-show="showModalTodo" class="fixed top-0 w-full h-full overflow-hidden">
         <div class="relative flex justify-center w-full h-full">
             <div class="container relative z-20 max-w-xl mt-20 h-min">
-                <input
-                    type="text"
-                    placeholder="Escribe un nuevo recordatorio..."
-                    class="text-2xl shadow-[0px_20px_55px_-5px_rgba(0,0,0,0.3)] placeholder-zinc-400 h-14 bg-neutral-200 w-full rounded-xl shadow-neutral-500 border-neutral-300 focus:ring-0 focus:border-neutral-300"
-                />
+                <form @submit.prevent="addTodo()">
+                    <input
+                        v-model="form.title"
+                        ref="title"
+                        type="text"
+                        placeholder="Escribe un nuevo recordatorio..."
+                        class="text-2xl shadow-[0px_20px_55px_-5px_rgba(0,0,0,0.3)] placeholder-zinc-400 h-14 bg-neutral-200 w-full rounded-xl shadow-neutral-500 border-neutral-300 focus:ring-0 focus:border-neutral-300"
+                    />
+                </form>
             </div>
-            <div @click="showModalTodo = !showModalTodo" class="absolute top-0 z-10 w-full h-full"></div>
+            <div @click="toggleModal()" class="absolute top-0 z-10 w-full h-full"></div>
         </div>
     </div>
 </template>
@@ -93,26 +94,19 @@ export default {
     data() {
         return {
             todos: [],
-            showModalTodo: false
+            showModalTodo: false,
+            form: {
+                title: null
+            },
         }
     },
 
     mounted() {
-        const todos = null;
-
-        var config = {
-            method: 'get',
-            url: 'https://jsonplaceholder-v1.herokuapp.com/api/todos',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        };
-
-        axios(config)
-            .then(response => (this.todos = response.data.data))
-            .catch(function (error) {
-                console.log(error);
+        axios.get('https://jsonplaceholder-v1.herokuapp.com/api/todos')
+            .then((result) => {
+                this.todos = result.data.data
+            }).catch((err) => {
+                console.error(error);
             });
     },
 
@@ -133,53 +127,46 @@ export default {
 
     methods: {
         updateTodo(todo, title, completed) {
-            var data = JSON.stringify({
-                "title": title,
-                "completed": completed
-            });
-
             const index = this.todos.findIndex(e => e.id == todo.id)
 
-            var config = {
-                method: 'put',
-                url: 'https://jsonplaceholder-v1.herokuapp.com/api/todos/' + todo.id,
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                data: data
-            };
-
-            axios(config)
-                .then(response => {
-                    this.todos[index].title = title
-                    this.todos[index].completed = completed
-                    console.log('succcess');
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+            axios.put('https://jsonplaceholder-v1.herokuapp.com/api/todos/' + todo.id, {
+                title: title,
+                completed: completed
+            }).then((result) => {
+                this.todos[index].title = title
+                this.todos[index].completed = completed
+                console.log('succcess');
+            }).catch((err) => {
+                console.error(err);
+            });
         },
         deleteTodo(todo) {
-            var config = {
-                method: 'delete',
-                url: 'https://jsonplaceholder-v1.herokuapp.com/api/todos/' + todo.id,
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            }
-
             const index = this.todos.findIndex(e => e.id == todo.id)
 
-            axios(config)
-                .then((response) => {
+            axios.delete('https://jsonplaceholder-v1.herokuapp.com/api/todos/' + todo.id,)
+                .then((result) => {
                     this.todos.splice(index, 1);
                     console.log('success');
-                })
-                .catch(function (error) {
-                    console.log(error);
+                }).catch((err) => {
+                    console.error(err);
                 });
+        },
+        addTodo() {
+            axios.post('https://jsonplaceholder-v1.herokuapp.com/api/users/1/todos', {
+                title: this.form.title,
+                completed: false,
+            }).then((result) => {
+                this.todos.push(result.data.data)
+                this.showModalTodo = false
+                this.form.title = null
+                console.log(JSON.stringify(result.data.data));
+            }).catch((err) => {
+                console.error(err);
+            });
+        },
+        toggleModal() {
+            this.showModalTodo = !this.showModalTodo
+            this.$nextTick(() => this.$refs.title.focus())
         }
     },
 }
