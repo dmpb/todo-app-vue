@@ -1,7 +1,41 @@
-# Vue 3 + Vite
+# ToDo App
+TodoApp es aplicativo de gestión de tareas. Consume la API de JSONPlaceholder.
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+[Demo](https://todo-app-vue-v2.herokuapp.com/ "Demo")
 
-## Recommended IDE Setup
+[![Screenshot ToDo App](https://todo-app-vue-v2.herokuapp.com/app-screenshot.png "Screenshot ToDo App")](https://todo-app-vue-v2.herokuapp.com/ "Screenshot ToDo App")
 
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar)
+## Instalación para desarrollo
+```shell
+# Clonar el repositorio
+git clone https://github.com/dmpb/todo-app-vue.git
+
+# Ejecutar
+npm run dev
+```
+## Instalación para despliegue
+Para desplegar el proyecto se debe seguir los pasos de viter. [Enlace de despliegue con Viter](https://vitejs.dev/guide/static-deploy.html "Enlace de despliegue con Viter")
+### Heroku
+Hay algunos inconvenientes con el despliegue con Heroku. Por ello, se recomienda seguir estos pasos de despliegue:
+
+1. Install [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli "Heroku CLI").
+1. Configuración del proyecto
+
+	```shell
+	# Crear un nuevo app con un específico nombre
+	heroku apps:create example
+
+	# set buildpack for static sites
+	heroku buildpacks:set heroku/nodejs -a <your-app-name>
+
+	heroku buildpacks:add https://github.com/heroku/heroku-buildpack-static.git -a <your-app-name>
+	```
+1. Deploy your site:
+
+	```shell
+	# publish site
+	git push heroku main
+
+	# opens a browser to view the Dashboard version of Heroku CI
+	heroku open
+	```
